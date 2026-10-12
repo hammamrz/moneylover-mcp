@@ -1,8 +1,6 @@
 name: Money Lover Gmail Read Only Preflight
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '38 * * * *'
 permissions:
   contents: read
 concurrency:
