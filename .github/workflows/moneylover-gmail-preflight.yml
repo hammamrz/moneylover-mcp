@@ -1,0 +1,29 @@
+name: Money Lover Gmail Read Only Preflight
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '38 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: moneylover-gmail-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check integration without writing transactions
+        env:
+          MONEYLOVER_EMAIL: ${{ secrets.MONEYLOVER_EMAIL }}
+          MONEYLOVER_PASSWORD: ${{ secrets.MONEYLOVER_PASSWORD }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+        run: node scripts/moneylover-gmail-preflight.js
